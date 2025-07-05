@@ -6,6 +6,9 @@ from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import fastf1
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+
 
 class F1Predictor:
       
@@ -77,19 +80,19 @@ class F1Predictor:
         else:
             return "Unkown"
         
-training_data1 = F1Predictor.generate_training_data('Ham',2024)
+training_data1 = F1Predictor.generate_training_data('Ver',2024)
 training_data1=training_data1.dropna()
-training_data2 = F1Predictor.generate_training_data('Ham',2023)
+training_data2 = F1Predictor.generate_training_data('Ver',2023)
 training_data2=training_data2.dropna()
-training_data3 = F1Predictor.generate_training_data('Ham',2022)
+training_data3 = F1Predictor.generate_training_data('Ver',2022)
 training_data3=training_data3.dropna()
-training_data4 = F1Predictor.generate_training_data('Ham',2021)
+training_data4 = F1Predictor.generate_training_data('Ver',2021)
 training_data4=training_data4.dropna()
-training_data5 = F1Predictor.generate_training_data('Ham',2020)
+training_data5 = F1Predictor.generate_training_data('Ver',2020)
 training_data5=training_data5.dropna()
-training_data6 = F1Predictor.generate_training_data('Ham',2019)
+training_data6 = F1Predictor.generate_training_data('Ver',2019)
 training_data6=training_data6.dropna()
-training_data7 = F1Predictor.generate_training_data('Ham',2018)
+training_data7 = F1Predictor.generate_training_data('Ver',2018)
 training_data7=training_data7.dropna()
 
 
@@ -102,19 +105,23 @@ for col in ['Finish1', 'Finish2', 'Finish3']:
 
 Xtrain= training_data.drop(columns=['TargetFinish'])
 Ytrain= training_data['TargetFinish']
+
 tracks = ['Track1','Track2','Track3','Track4','Finish1','Finish2','Finish3']
 Xtrain[tracks] = Xtrain[tracks].fillna('Unknown')
 Xtrain = pd.get_dummies(Xtrain, columns=tracks)
+Xtrain['Grid4'] = pd.to_numeric(Xtrain['Grid4'])
 
 
-model = RandomForestClassifier()
+model = HistGradientBoostingClassifier()
 if Xtrain.isnull().values.any():
     print("NULL VALUESSSSS")
 print(f"Xtrain shape: {Xtrain.shape}")
 print(f"Ytrain shape: {Ytrain.shape}")
 
 Xtrains, X_val, Ytrains, y_val = train_test_split(Xtrain, Ytrain, test_size=0.2, random_state=42)
-model.fit(Xtrains,Ytrains)
+sample_weights = 1 / (Xtrains['Grid4'] + 1)
+sample_weights *=10
+model.fit(Xtrains,Ytrains, sample_weight=sample_weights)
 Ypred = model.predict(X_val)
 accuracy = accuracy_score(Ypred,y_val)
 print("Training Accuracy:",accuracy)
