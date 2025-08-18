@@ -1,0 +1,13 @@
+# Requirements for F1 Race Predictor
+
+# Data handling
+pandas>=1.5.0
+
+# Plotting
+matplotlib>=3.7.0
+
+# Machine learning
+scikit-learn>=1.2.0
+
+# Formula 1 data API
+fastf1>=2.4.0
