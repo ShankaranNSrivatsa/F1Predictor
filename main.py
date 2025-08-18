@@ -125,7 +125,6 @@ model.fit(Xtrains,Ytrains, sample_weight=sample_weights)
 Ypred = model.predict(X_val)
 accuracy = accuracy_score(Ypred,y_val)
 print("Training Accuracy:",accuracy)
-            
         
 
 
